@@ -22,7 +22,7 @@ app.get('/api-1.0/keygen', function(req, res){
 				error:0, 
 				error_msg:"",
 				name:data.name,
-				UUID:data.uuid,
+				uuid:data.uuid,
 			}));
 			res.end();
 		}
