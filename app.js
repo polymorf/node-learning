@@ -1,32 +1,44 @@
 var express = require('express');
+var xrpc = require('xrpc');
 var path = require("path");
 
 var ssl = require("./lib/ssl");
-/*var db = require("./lib/database");*/
+var db = require("./lib/database");
+
 
 var app = express();
-
-
-app.get('/api-1.0/keygen', function(req, res){
-	var err = "";
-	var size = req.query.size;
-	var name = req.query.name;
-
-	/* Generating the Key */
-	ssl.genPrivateKey(name,size,function(data) {
-		if ( data.error ) {
-			res.send(JSON.stringify({error:1, error_msg:data.error}));
-			res.end();
-		}else{
-			res.send(JSON.stringify({
-				error:0, 
-				error_msg:"",
-				name:data.name,
-				uuid:data.uuid,
-			}));
-			res.end();
-		}
-	});
+app.configure(function () {
+	app.use(xrpc.xmlRpc);
 });
+
+
+app.post('/api-1.0/RPC', xrpc.route({
+	pki: {
+		keygen: function(reqdata, callback) {
+			ssl.genPrivateKey(reqdata.name,reqdata.size,function(key) {
+				if ( key.error ) {
+					callback(key.error,null);
+				}else{
+					db.savePrivateKey(key.uuid,key.name,key.key);
+					callback(null, {
+						error:0,
+						error_msg:"",
+						name:key.name,
+						uuid:key.uuid
+					});
+				}
+			});
+		},
+		getkeys: function(name, callback) {
+			db.getPrivateKeys(name,function(err,keys) {
+				if ( err ) {
+					callback(err,null);
+				}else{
+					callback(null, keys);
+				}
+			});
+		}
+	}
+}));
 
 app.listen(3000);
