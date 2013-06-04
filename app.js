@@ -19,12 +19,17 @@ app.post('/api-1.0/RPC', xrpc.route({
 				if ( key.error ) {
 					callback(key.error,null);
 				}else{
-					db.savePrivateKey(key.uuid,key.name,key.key);
-					callback(null, {
-						error:0,
-						error_msg:"",
-						name:key.name,
-						uuid:key.uuid
+					db.savePrivateKey(key.uuid,key.name,key.key, function(err){
+						if ( err ) {
+							callback(err,null);
+						}else{
+							callback(null, {
+								error:0,
+								error_msg:"",
+								name:key.name,
+								uuid:key.uuid
+							});
+						}
 					});
 				}
 			});
