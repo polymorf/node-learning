@@ -3,7 +3,7 @@ var xrpc = require('xrpc');
 var path = require("path");
 
 var ssl = require("./lib/ssl");
-var db = require("./lib/database");
+var db = require("./lib/databases/pki");
 
 
 var app = express();
