@@ -20,21 +20,15 @@ app.post('/api-1.0/RPC', xrpc.route({
 				if ( key.error ) {
 					return callback(key.error,null);
 				}else{
-					ssl.getModulus(key.key,function(modulus_err, modulus_data) {
-						if ( modulus_err ) {
-							return callback(modulus_err,null);
+					db.savePrivateKey(key.uuid,key.name,key.key,key.modulus, function(err){
+						if ( err ) {
+							callback(err,null);
 						}else{
-							db.savePrivateKey(key.uuid,key.name,key.key,modulus_data.modulus, function(err){
-								if ( err ) {
-									callback(err,null);
-								}else{
-									callback(null, {
-										error:0,
-										error_msg:"",
-										name:key.name,
-										uuid:key.uuid
-									});
-								}
+							callback(null, {
+								error:0,
+								error_msg:"",
+								name:key.name,
+								uuid:key.uuid
 							});
 						}
 					});
