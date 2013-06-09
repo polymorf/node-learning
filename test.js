@@ -1,5 +1,7 @@
 var xmlrpc = require('xmlrpc');
 var client = xmlrpc.createClient({ host: 'localhost', port: 3000, path: '/api-1.0/RPC'});
+
+/*
 client.methodCall('pki.genKey', [ { name:"test2'", keysize: 256 } ], function (error, value) {
 	if ( error ) {
 		console.log('-- pki.keygen error : '+error);
@@ -19,6 +21,7 @@ client.methodCall('pki.getKeys', [ null ], function (error, keys) {
 	}
 });
 
+
 client.methodCall('pki.genCSR', [ { keysize: 2048, country: "FR", state: "Haute Garonne", locality: "Toulouse", organization: "polymorf Corp", organizationUnit: "informatique", commonName: "david.polymorf.fr", emailAddress: "david@nfrance.com" } ], function (error, csr) {
 	if ( error ) {
 		console.log('-- pki.genCSR error : '+error);
@@ -26,4 +29,15 @@ client.methodCall('pki.genCSR', [ { keysize: 2048, country: "FR", state: "Haute 
 		console.log('-- pki.genCSR : resp ok');
 		console.log("csr = \n"+csr.csr);
 	}
+});
+
+*/
+
+client.methodCall('pki.genSelfSignedCertificate', [ { days: 365, keysize: 2048, country: "FR", state: "Haute Garonne", locality: "Toulouse", organization: "polymorf Corp", organizationUnit: "informatique", commonName: "david.polymorf.fr", emailAddress: "david@nfrance.com" } ], function (error, crt) {
+	if ( error ) {
+		console.log('-- pki.genSelfSignedCertificate error : '+error);
+	}
+	console.log('-- pki.genSelfSignedCertificate : resp ok');
+	console.log("certificate = \n"+crt.certificate);
+	console.log("validity = "+crt.validity.start+" -> "+crt.validity.end);
 });
